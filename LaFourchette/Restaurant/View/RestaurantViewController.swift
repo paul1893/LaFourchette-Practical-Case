@@ -20,7 +20,7 @@ class RestaurantViewController: UIViewController, RestaurantView {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = Color.background
         controller.viewDidLoad()
         addViews()
         initConstraints()

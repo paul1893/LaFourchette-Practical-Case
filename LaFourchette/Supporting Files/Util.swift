@@ -13,10 +13,51 @@ class Margin {
 }
 
 class Color {
-    static let mainColor = UIColor(red: 0.404, green: 0.573, blue: 0.298, alpha: 1)
-    static let mainTextColor = UIColor.black
-    static let secondTextColor = UIColor(red: 0.439, green: 0.439, blue: 0.439, alpha: 1.0)
-    static let cardBackground = UIColor(red: 0.941, green: 0.941, blue: 0.941, alpha: 1.0)
+    static var mainColor: UIColor {
+        get {
+            if #available(iOS 11.0, *) {
+                    return UIColor(named: "MainColor")!
+                } else {
+                    return UIColor(red: 0.404, green: 0.573, blue: 0.298, alpha: 1)
+            }
+        }
+    }
+    static var mainTextColor: UIColor {
+           get {
+               if #available(iOS 11.0, *) {
+                       return UIColor(named: "MainTextColor")!
+                   } else {
+                       return UIColor.black
+               }
+           }
+       }
+    static var secondTextColor: UIColor {
+        get {
+            if #available(iOS 11.0, *) {
+                    return UIColor(named: "SecondTextColor")!
+                } else {
+                    return UIColor(red: 0.439, green: 0.439, blue: 0.439, alpha: 1.0)
+            }
+        }
+    }
+    static var cardBackground: UIColor {
+        get {
+            if #available(iOS 11.0, *) {
+                    return UIColor(named: "CardBackground")!
+                } else {
+                    return UIColor(red: 0.941, green: 0.941, blue: 0.941, alpha: 1.0)
+            }
+        }
+    }
+    static var background: UIColor {
+        get {
+            if #available(iOS 11.0, *) {
+                    return UIColor(named: "Background")!
+                } else {
+                    return UIColor.white
+            }
+        }
+    }
 }
 
 class Message {

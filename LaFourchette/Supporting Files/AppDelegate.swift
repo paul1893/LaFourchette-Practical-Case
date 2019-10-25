@@ -6,6 +6,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        if NSClassFromString("XCTestCase") != nil {
+            return true
+        }
         let router = AppRouter()
         LaFourchetteModule.router = router
         window = UIWindow()
