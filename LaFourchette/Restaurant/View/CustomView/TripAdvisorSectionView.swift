@@ -1,6 +1,6 @@
 import UIKit
 
-class TripAdvisorSectionView : UIView {
+final class TripAdvisorSectionView : UIView {
     private let titleLabel = UILabel()
     private let scoreLabel = UILabel()
     private let countLabel = UILabel()
@@ -24,23 +24,22 @@ class TripAdvisorSectionView : UIView {
     
     private func showTitle(_ restaurant: RestaurantViewModel) {
         titleLabel.text = Message.tripAdvisorTitleSection.localized
-        titleLabel.font = Font.body
+        titleLabel.setTextStyle(Style.body)
     }
     
     private func showScore(_ restaurant: RestaurantViewModel) {
         scoreLabel.text = restaurant.tripAdvisorScore
-        scoreLabel.font = Font.title
+        scoreLabel.setTextStyle(Style.title)
     }
     
     private func showCount(_ restaurant: RestaurantViewModel) {
         countLabel.text = restaurant.tripAdvisorCount
-        countLabel.textColor = Color.secondTextColor
+        countLabel.setTextStyle(Style.subbody)
     }
     
     private func showSeeAll(_ restaurant: RestaurantViewModel) {
         seeAllScore.text = Message.seeAllScore.localized
-        seeAllScore.textColor = Color.mainColor
-        seeAllScore.font = Font.body
+        seeAllScore.setTextStyle(Style.bodyColored)
         seeAllScore.textAlignment = .center
     }
     
@@ -93,7 +92,6 @@ class TripAdvisorSectionView : UIView {
         let seeAllCount = UILabel()
         horizontalStackView.addArrangedSubview(seeAllCount)
         seeAllCount.text = Message.seeAll.localized
-        seeAllCount.textColor = Color.mainColor
-        seeAllCount.font = Font.body
+        seeAllCount.setTextStyle(Style.bodyColored)
     }
 }

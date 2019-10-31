@@ -1,7 +1,7 @@
 import UIKit
 
 
-class MenuSectionView : UIView {
+final class MenuSectionView : UIView {
     private let titleLabel = UILabel()
     private let chefNameLabel = UILabel()
     private let mealAndMenuStackView = UIStackView()
@@ -25,14 +25,14 @@ class MenuSectionView : UIView {
     
     private func showTitle(_ restaurant: RestaurantViewModel) {
         titleLabel.text = Message.restaurantMenuTitleSection.localized
-        titleLabel.font = Font.body
+        titleLabel.setTextStyle(Style.body)
     }
     
     private func showChef(_ restaurant: RestaurantViewModel) {
         if let menuChefOriginLabel = restaurant.menuChefOriginLabel {
             chefNameLabel.isHidden = false
             chefNameLabel.text = menuChefOriginLabel
-            chefNameLabel.font = Font.body
+            chefNameLabel.setTextStyle(Style.body)
         } else {
             chefNameLabel.isHidden = true
         }
@@ -50,13 +50,13 @@ class MenuSectionView : UIView {
             let nameLabel = UILabel()
             nameLabel.numberOfLines = 2
             nameLabel.text = meal.name
-            nameLabel.textColor = Color.secondTextColor
+            nameLabel.setTextStyle(Style.subbody)
             stackView.addArrangedSubview(nameLabel)
             
             let priceLabel = UILabel()
             priceLabel.textAlignment = .center
             priceLabel.text = meal.price
-            priceLabel.font = Font.body
+            priceLabel.setTextStyle(Style.body)
             stackView.addArrangedSubview(priceLabel)
             
             priceLabel.widthAnchor.constraint(equalTo: nameLabel.widthAnchor, multiplier: PRICE_RATIO).isActive = true
@@ -85,13 +85,13 @@ class MenuSectionView : UIView {
             
             let nameLabel = UILabel()
             nameLabel.attributedText = boldString
-            nameLabel.textColor = Color.secondTextColor
+            nameLabel.setTextStyle(Style.subbody)
             stackView.addArrangedSubview(nameLabel)
             
             let priceLabel = UILabel()
             priceLabel.textAlignment = .center
             priceLabel.text = menu.price
-            priceLabel.font = Font.body
+            priceLabel.setTextStyle(Style.body)
             stackView.addArrangedSubview(priceLabel)
             
             priceLabel.widthAnchor.constraint(equalTo: nameLabel.widthAnchor, multiplier: PRICE_RATIO).isActive = true
@@ -101,8 +101,7 @@ class MenuSectionView : UIView {
     
     private func showSeeAll() {
         seeAllMenuLabel.text = Message.seeAllRestaurantMenu.localized
-        seeAllMenuLabel.textColor = Color.mainColor
-        seeAllMenuLabel.font = Font.body
+        seeAllMenuLabel.setTextStyle(Style.bodyColored)
         seeAllMenuLabel.textAlignment = .center
     }
     

@@ -1,10 +1,9 @@
 import Foundation
-
 protocol RemoteRestaurantRepository {
-    func getRestaurant() throws -> Restaurant
+    func getRestaurant() -> Promise<Restaurant, RepositoryError>
 }
 
-class RemoteRestaurantRepositoryImpl : RemoteRestaurantRepository {
+final class RemoteRestaurantRepositoryImpl : RemoteRestaurantRepository {
     private let DEFAULT_SIZE_PICTURE = "664x374"
     private let caller: Caller
     private let parser: RestaurantParser
@@ -16,16 +15,19 @@ class RemoteRestaurantRepositoryImpl : RemoteRestaurantRepository {
         self.api = api
     }
     
-    func getRestaurant() throws -> Restaurant  {
+    func getRestaurant() -> Promise<Restaurant, RepositoryError> {
         if let url = URL(string: api) {
             let (receivedData, error) = caller.get(with: url)
-            guard error == nil else { throw RepositoryError.serverError }
-            guard let data = receivedData else { throw RepositoryError.serverError }
+            guard error == nil else { return Promise(.failure(RepositoryError.serverError)) }
+            guard let data = receivedData else { return Promise(.failure(RepositoryError.serverError)) }
             
-            let restaurantJson = try parser.parse(data)
-            return transform(restaurantJson)
+            return parser.parse(data)
+                .then {
+                    let restaurant = self.transform($0)
+                    return Promise(.success(restaurant))
+            } ?? Promise<Restaurant, RepositoryError>(.failure(RepositoryError.parsingError))
         }
-        throw RepositoryError.wrongUrl
+        return Promise(.failure(RepositoryError.wrongUrl))
     }
     
     private func transform(_ restaurantJson: RestaurantJSON) -> Restaurant {
@@ -60,88 +62,44 @@ class RemoteRestaurantRepositoryImpl : RemoteRestaurantRepository {
     }
     
     private func collectStarters(from restaurantJson: RestaurantJSON) -> [Meal] {
-        var starters = [Meal]()
-        if let starter1 = restaurantJson.card_start_1 {
-            starters.append(
-                Meal(name: starter1, price: restaurantJson.price_card_start_1)
-            )
-        }
-        if let starter2 = restaurantJson.card_start_2 {
-            starters.append(
-                Meal(name: starter2, price: restaurantJson.price_card_start_2)
-            )
-        }
-        if let starter3 = restaurantJson.card_start_3 {
-            starters.append(
-                Meal(name: starter3, price: restaurantJson.price_card_start_3)
-            )
-        }
-        return starters
+        return [
+            (restaurantJson.card_start_1, restaurantJson.price_card_start_1),
+            (restaurantJson.card_start_2, restaurantJson.price_card_start_2),
+            (restaurantJson.card_start_3, restaurantJson.price_card_start_3)
+            ]
+            .filter({ $0.0 != nil })
+            .map({ Meal(name: $0.0!, price: $0.1) })
     }
     
     private func collectMeals(from restaurantJson: RestaurantJSON) -> [Meal] {
-        var meals = [Meal]()
-        if let meal1 = restaurantJson.card_main_1 {
-            meals.append(
-                Meal(name: meal1, price: restaurantJson.price_card_main_1)
-            )
-        }
-        if let meal2 = restaurantJson.card_main_2 {
-            meals.append(
-                Meal(name: meal2, price: restaurantJson.price_card_main_2)
-            )
-        }
-        if let meal3 = restaurantJson.card_main_3 {
-            meals.append(
-                Meal(name: meal3, price: restaurantJson.price_card_main_3)
-            )
-        }
-        return meals
+        return [
+            (restaurantJson.card_main_1, restaurantJson.price_card_main_1),
+            (restaurantJson.card_main_2, restaurantJson.price_card_main_2),
+            (restaurantJson.card_main_3, restaurantJson.price_card_main_3)
+            ]
+            .filter({ $0.0 != nil })
+            .map({ Meal(name: $0.0!, price: $0.1) })
     }
     
     private func collectDesserts(from restaurantJson: RestaurantJSON) -> [Meal] {
-        var desserts = [Meal]()
-        if let dessert1 = restaurantJson.card_dessert_1 {
-            desserts.append(
-                Meal(name: dessert1, price: restaurantJson.price_card_dessert_1)
-            )
-        }
-        if let dessert2 = restaurantJson.card_dessert_2 {
-            desserts.append(
-                Meal(name: dessert2, price: restaurantJson.price_card_dessert_2)
-            )
-        }
-        if let dessert3 = restaurantJson.card_dessert_3 {
-            desserts.append(
-                Meal(name: dessert3, price: restaurantJson.price_card_dessert_3)
-            )
-        }
-        return desserts
+        return [
+            (restaurantJson.card_dessert_1, restaurantJson.price_card_dessert_1),
+            (restaurantJson.card_dessert_2, restaurantJson.price_card_dessert_2),
+            (restaurantJson.card_dessert_3, restaurantJson.price_card_dessert_3)
+            ]
+            .filter({ $0.0 != nil })
+            .map({ Meal(name: $0.0!, price: $0.1) })
     }
     
     private func collectMenus(from restaurantJson: RestaurantJSON) -> [Menu] {
-        var menus = [Menu]()
-        if let menuLunchWeek = restaurantJson.menus?.menus_lunch_week {
-            menus.append(
-                Menu(weekTime: WeekTime.LUNCH_WEEK, minPrice: menuLunchWeek.min_price, maxPrice: menuLunchWeek.max_price)
-            )
-        }
-        if let menuLunchWeekend = restaurantJson.menus?.menus_lunch_weekend {
-            menus.append(
-                Menu(weekTime: WeekTime.LUNCH_WEEKEND, minPrice: menuLunchWeekend.min_price, maxPrice: menuLunchWeekend.max_price)
-            )
-        }
-        if let menuDinerWeek = restaurantJson.menus?.menus_diner_week {
-            menus.append(
-                Menu(weekTime: WeekTime.DINER_WEEK, minPrice: menuDinerWeek.min_price, maxPrice: menuDinerWeek.max_price)
-            )
-        }
-        if let menuDinerWeekend = restaurantJson.menus?.menus_diner_weekend {
-            menus.append(
-                Menu(weekTime: WeekTime.DINER_WEEKEND, minPrice: menuDinerWeekend.min_price, maxPrice: menuDinerWeekend.max_price)
-            )
-        }
-        return menus
+        return [
+            (WeekTime.LUNCH_WEEK, restaurantJson.menus?.menus_lunch_week),
+            (WeekTime.LUNCH_WEEKEND, restaurantJson.menus?.menus_lunch_weekend),
+            (WeekTime.DINER_WEEK, restaurantJson.menus?.menus_diner_week),
+            (WeekTime.DINER_WEEKEND, restaurantJson.menus?.menus_diner_weekend)
+            ]
+            .filter({ $0.1 != nil })
+            .map({ Menu(weekTime: $0.0, minPrice: $0.1!.min_price, maxPrice: $0.1!.max_price) })
     }
 }
 

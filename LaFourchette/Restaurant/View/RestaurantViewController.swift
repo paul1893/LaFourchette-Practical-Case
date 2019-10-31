@@ -1,6 +1,6 @@
 import UIKit
 
-class RestaurantViewController: UIViewController, RestaurantView {
+final class RestaurantViewController: UIViewController, RestaurantView {
     
     var controller:  RestaurantController!
     
@@ -50,8 +50,8 @@ class RestaurantViewController: UIViewController, RestaurantView {
             }
         }
         titleLabel.text = restaurant.title
+        titleLabel.setTextStyle(Style.title)
         titleLabel.textColor = restaurant.pictureURL != nil ? UIColor.white : UIColor.black
-        titleLabel.font = Font.title
         
         titleSectionView.showData(for: restaurant)
         menuSectionView.showData(for: restaurant)
@@ -142,8 +142,7 @@ class RestaurantViewController: UIViewController, RestaurantView {
     private func initReservationButtonConstraints() {
         view.addSubview(reservationButton)
         reservationButton.setTitle(Message.reservationButtonTitle.localized, for: .normal)
-        reservationButton.setTitleColor(Color.secondTextColor, for: .highlighted)
-        reservationButton.backgroundColor = Color.mainColor
+        reservationButton.setTextStyle(Style.mainButton)
         reservationButton.layer.cornerRadius = RESERVATION_BUTTON_CORNER_RADIUS
         reservationButton.clipsToBounds = true
         reservationButton.translatesAutoresizingMaskIntoConstraints = false

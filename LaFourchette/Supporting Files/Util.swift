@@ -1,18 +1,34 @@
 import UIKit
 import Foundation
 
-class Font {
+final class Style {
+    static let subbody = Style(font: Font.subbody, color: Color.secondTextColor)
+    static let body = Style(font: Font.body, color: Color.mainTextColor)
+    static let bodyColored = Style(font: Font.body, color: Color.mainColor)
+    static let title = Style(font: Font.title, color: Color.mainTextColor)
+    static let mainButton = Style(font: Font.body, color: Color.mainColor)
+    
+    let font: UIFont
+    let color: UIColor
+    
+    init(font: UIFont, color: UIColor) {
+        self.font = font
+        self.color = color
+    }
+}
+
+final class Font {
     static let title = UIFont.boldSystemFont(ofSize: 22.0)
     static let body = UIFont.boldSystemFont(ofSize: 16.0)
     static let subbody = UIFont.systemFont(ofSize: 14.0)
 }
 
-class Margin {
+final class Margin {
     static let little : CGFloat = 16
     static let medium : CGFloat = 32
 }
 
-class Color {
+final class Color {
     static var mainColor: UIColor {
         get {
             if #available(iOS 11.0, *) {
@@ -60,7 +76,7 @@ class Color {
     }
 }
 
-class Message {
+final class Message {
     static let baseNote = "/10"
     static let restaurantMenuTitleSection = "CARTE DU RESTAURANT"
     static let chefMenu = "Menu du chef - "
@@ -83,14 +99,4 @@ class Message {
     static let averageOpinion = "%d avis"
     static let noPrice = "- €"
     static let price = "%d €"
-}
-
-extension String {
-    func localizeWithFormat(arguments: CVarArg...) -> String {
-        return String(format: self.localized, arguments: arguments)
-    }
-    
-    var localized: String {
-        return NSLocalizedString(self, tableName: nil, bundle: Bundle.main, value: "", comment: "")
-    }
 }

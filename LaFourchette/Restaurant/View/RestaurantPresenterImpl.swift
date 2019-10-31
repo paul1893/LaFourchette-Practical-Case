@@ -5,7 +5,7 @@ protocol RestaurantView : class {
     func showRestaurant(with restaurant: RestaurantViewModel)
 }
 
-class RestaurantPresenterImpl : RestaurantPresenter {
+final class RestaurantPresenterImpl : RestaurantPresenter {
     private weak var view : RestaurantView?
     private let executor: Executor
     

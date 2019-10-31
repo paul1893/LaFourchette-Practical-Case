@@ -4,7 +4,7 @@ protocol Caller {
     func get(with url: URL) -> (Data?, Error?)
 }
 
-class CallerImpl : Caller {
+final class CallerImpl : Caller {
     func get(with url: URL) -> (Data?, Error?) {
         var receivedData: Data?
         var receivedError: Error?

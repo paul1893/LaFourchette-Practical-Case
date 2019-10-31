@@ -36,12 +36,12 @@ class RestaurantInteractorTests: XCTestCase {
             self.error = error
         }
         
-        func getRestaurant() throws -> Restaurant {
+        func getRestaurant() -> Promise<Restaurant, RepositoryError> {
             loadRestaurantFunction = true
             if let error = error {
-                throw error
+                return Promise(.failure(error))
             }
-            return restaurant!
+            return Promise(.success(restaurant!))
         }
     }
     class MockPresenter : RestaurantPresenter {

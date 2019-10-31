@@ -1,6 +1,6 @@
 import UIKit
 
-class TitleSectionView : UIView {
+final class TitleSectionView : UIView {
     private let DESCRIPTION_NUMBER_OF_LINES = 20
     private let titleLabel = UILabel()
     private let priceLabel = UILabel()
@@ -23,13 +23,12 @@ class TitleSectionView : UIView {
     
     private func showTitle(_ restaurant: RestaurantViewModel) {
         titleLabel.text = restaurant.subtitle
-        titleLabel.font = Font.body
+        titleLabel.setTextStyle(Style.body)
     }
     
     private func showPrice(_ restaurant: RestaurantViewModel) {
         priceLabel.text = restaurant.priceLabel
-        priceLabel.textColor = Color.secondTextColor
-        priceLabel.font = Font.subbody
+        priceLabel.setTextStyle(Style.subbody)
     }
     
     private func showScore(_ restaurant: RestaurantViewModel) {
@@ -43,14 +42,13 @@ class TitleSectionView : UIView {
         )
         bigBoldString.append(boldString)
         scoreLabel.attributedText = bigBoldString
-        scoreLabel.font = Font.title
+        scoreLabel.setTextStyle(Style.title)
         scoreLabel.textAlignment = .right
     }
     
     private func showOpinion(_ restaurant: RestaurantViewModel) {
         opinionLabel.text = restaurant.opinionLabel
-        opinionLabel.textColor = Color.secondTextColor
-        opinionLabel.font = Font.subbody
+        opinionLabel.setTextStyle(Style.subbody)
         opinionLabel.textAlignment = .right
     }
     
@@ -58,8 +56,7 @@ class TitleSectionView : UIView {
         descriptionLabel.text = restaurant.description
         descriptionLabel.numberOfLines = DESCRIPTION_NUMBER_OF_LINES
         descriptionLabel.textAlignment = .justified
-        descriptionLabel.font = Font.subbody
-        descriptionLabel.textColor = Color.secondTextColor
+        descriptionLabel.setTextStyle(Style.subbody)
     }
     
     private func makeConstraints() {

@@ -4,7 +4,7 @@ protocol RestaurantInteractor {
     func loadRestaurant()
 }
 
-class RestaurantInteractorImpl : RestaurantInteractor {
+final class RestaurantInteractorImpl : RestaurantInteractor {
     private let remoteRepository: RemoteRestaurantRepository
     private let presenter: RestaurantPresenter
     
@@ -17,11 +17,8 @@ class RestaurantInteractorImpl : RestaurantInteractor {
     }
     
     func loadRestaurant() {
-        do {
-            let restaurant = try remoteRepository.getRestaurant()
-            presenter.present(with: restaurant)
-        } catch {
-            presenter.presentError()
-        }
+        _ = remoteRepository.getRestaurant()
+            .then { self.presenter.present(with: $0) }
+            .catch { self.presenter.presentError() }
     }
 }

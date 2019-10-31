@@ -20,11 +20,11 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
             self.error = error
         }
         
-        override func parse(_ data: Data) throws -> RestaurantJSON {
+        override func parse(_ data: Data) -> Promise<RestaurantJSON, RepositoryError> {
             if let error = error {
-                throw error
+                return Promise(.failure(error))
             }
-            return json
+            return Promise(.success(json))
         }
     }
     
@@ -71,31 +71,30 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
         // WHEN
         let repository = RemoteRestaurantRepositoryImpl(api, mockCaller, mockParser)
         
-        do {
-            let result = try repository.getRestaurant()
-            
-            // THEN
-            XCTAssertEqual(
-                result,
-                Restaurant(
-                    pictureURL: nil,
-                    name: "Chez Gusto",
-                    speciality: "Française",
-                    description: "Le célèbre restaurant du film Pixar \"Ratatouille\"",
-                    address: Address(street: "10 rue de la paix", city: "Paris", zipcode: "75000", country: "France"),
-                    cardPrice: 100,
-                    score: Score(avg: nil, count: 200000),
-                    chefName: nil,
-                    starters: [Meal](),
-                    meals: [Meal](),
-                    desserts: [Meal](),
-                    menus: [Menu](),
-                    tripAdvisorScore: Score(avg: 9.8, count: 10000)
+        let promise = repository.getRestaurant()
+            .then {
+                // THEN
+                XCTAssertEqual(
+                    $0,
+                    Restaurant(
+                        pictureURL: nil,
+                        name: "Chez Gusto",
+                        speciality: "Française",
+                        description: "Le célèbre restaurant du film Pixar \"Ratatouille\"",
+                        address: Address(street: "10 rue de la paix", city: "Paris", zipcode: "75000", country: "France"),
+                        cardPrice: 100,
+                        score: Score(avg: nil, count: 200000),
+                        chefName: nil,
+                        starters: [Meal](),
+                        meals: [Meal](),
+                        desserts: [Meal](),
+                        menus: [Menu](),
+                        tripAdvisorScore: Score(avg: 9.8, count: 10000)
+                    )
                 )
-            )
-        } catch  {
-            XCTFail()
-        }
+            }.catch  {
+                XCTFail()
+            }
     }
     
     func testGetRestaurant_WhenNominalCase() {
@@ -146,48 +145,47 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
         // WHEN
         let repository = RemoteRestaurantRepositoryImpl(api, mockCaller, mockParser)
         
-        do {
-            let result = try repository.getRestaurant()
-            
-            // THEN
-            XCTAssertEqual(
-                result,
-                Restaurant(
-                    pictureURL: "http://www.google.fr",
-                    name: "Chez Gusto",
-                    speciality: "Française",
-                    description: "Le célèbre restaurant du film Pixar \"Ratatouille\"",
-                    address: Address(street: "10 rue de la paix", city: "Paris", zipcode: "75000", country: "France"),
-                    cardPrice: 100,
-                    score: Score(avg: 9.9, count: 200000),
-                    chefName: "Rémi",
-                    starters: [
-                        Meal(name: "Ratatouille froide entrée 1", price: 1),
-                        Meal(name: "Ratatouille froide entrée 2", price: 2),
-                        Meal(name: "Ratatouille froide entrée 3", price: 3)
-                    ],
-                    meals: [
-                        Meal(name: "Ratatouille plat 1", price: 4),
-                        Meal(name: "Ratatouille plat 2", price: 5),
-                        Meal(name: "Ratatouille plat 3", price: 6)
-                    ],
-                    desserts: [
-                        Meal(name: "Ratatouille sucrée dessert 1", price: 7),
-                        Meal(name: "Ratatouille sucrée dessert 2", price: 8),
-                        Meal(name: "Ratatouille sucrée dessert 3", price: 9)
-                    ],
-                    menus: [
-                        Menu(weekTime: WeekTime.LUNCH_WEEK, minPrice: 0, maxPrice: 1),
-                        Menu(weekTime: WeekTime.LUNCH_WEEKEND, minPrice: 2, maxPrice: 3),
-                        Menu(weekTime: WeekTime.DINER_WEEK, minPrice: 4, maxPrice: 5),
-                        Menu(weekTime: WeekTime.DINER_WEEKEND, minPrice: 6, maxPrice: 7)
-                    ],
-                    tripAdvisorScore: Score(avg: 9.8, count: 10000)
+        let promise = repository.getRestaurant()
+            .then {
+                // THEN
+                XCTAssertEqual(
+                    $0,
+                    Restaurant(
+                        pictureURL: "http://www.google.fr",
+                        name: "Chez Gusto",
+                        speciality: "Française",
+                        description: "Le célèbre restaurant du film Pixar \"Ratatouille\"",
+                        address: Address(street: "10 rue de la paix", city: "Paris", zipcode: "75000", country: "France"),
+                        cardPrice: 100,
+                        score: Score(avg: 9.9, count: 200000),
+                        chefName: "Rémi",
+                        starters: [
+                            Meal(name: "Ratatouille froide entrée 1", price: 1),
+                            Meal(name: "Ratatouille froide entrée 2", price: 2),
+                            Meal(name: "Ratatouille froide entrée 3", price: 3)
+                        ],
+                        meals: [
+                            Meal(name: "Ratatouille plat 1", price: 4),
+                            Meal(name: "Ratatouille plat 2", price: 5),
+                            Meal(name: "Ratatouille plat 3", price: 6)
+                        ],
+                        desserts: [
+                            Meal(name: "Ratatouille sucrée dessert 1", price: 7),
+                            Meal(name: "Ratatouille sucrée dessert 2", price: 8),
+                            Meal(name: "Ratatouille sucrée dessert 3", price: 9)
+                        ],
+                        menus: [
+                            Menu(weekTime: WeekTime.LUNCH_WEEK, minPrice: 0, maxPrice: 1),
+                            Menu(weekTime: WeekTime.LUNCH_WEEKEND, minPrice: 2, maxPrice: 3),
+                            Menu(weekTime: WeekTime.DINER_WEEK, minPrice: 4, maxPrice: 5),
+                            Menu(weekTime: WeekTime.DINER_WEEKEND, minPrice: 6, maxPrice: 7)
+                        ],
+                        tripAdvisorScore: Score(avg: 9.8, count: 10000)
+                    )
                 )
-            )
-        } catch  {
-            XCTFail()
-        }
+            }.catch  {
+                XCTFail()
+            }
     }
     
     func testGetRestaurant_WhenApiError_BecauseBadFormat() {
@@ -198,13 +196,13 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
         // WHEN
         let repository = RemoteRestaurantRepositoryImpl("hello world", mockCaller, mockParser)
         
-        do {
-            _ = try repository.getRestaurant()
-            XCTFail()
-        } catch {
-            // THEN
-            XCTAssertTrue(true)
-        }
+        repository.getRestaurant()
+            .then {_ in
+                XCTFail()
+            }.catch {
+                // THEN
+                XCTAssertTrue(true)
+            }
     }
     
     func testGetRestaurant_WhenServerError_BecauseErrorNotNil() {
@@ -216,13 +214,13 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
         // WHEN
         let repository = RemoteRestaurantRepositoryImpl(api, mockCaller, mockParser)
         
-        do {
-            _ = try repository.getRestaurant()
-            XCTFail()
-        } catch {
-            // THEN
-            XCTAssertTrue(true)
-        }
+        repository.getRestaurant()
+            .then {_ in
+                XCTFail()
+            }.catch {
+                // THEN
+                XCTAssertTrue(true)
+            }
     }
     
     func testGetRestaurant_WhenServerError_BecauseDataIsNil() {
@@ -234,13 +232,13 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
         // WHEN
         let repository = RemoteRestaurantRepositoryImpl(api, mockCaller, mockParser)
         
-        do {
-            _ = try repository.getRestaurant()
-            XCTFail()
-        } catch {
-            // THEN
-            XCTAssertTrue(true)
-        }
+        repository.getRestaurant()
+            .then {_ in
+                XCTFail()
+            }.catch {
+                // THEN
+                XCTAssertTrue(true)
+            }
     }
     
     func testGetRestaurant_WhenParserError() {
@@ -251,12 +249,12 @@ class RemoteRestaurantRepositoryTests: XCTestCase {
         // WHEN
         let repository = RemoteRestaurantRepositoryImpl(api, mockCaller, mockParser)
         
-        do {
-            _ = try repository.getRestaurant()
-            XCTFail()
-        } catch {
-            // THEN
-            XCTAssertTrue(true)
-        }
+        repository.getRestaurant()
+            .then {_ in
+                XCTFail()
+            }.catch {
+                // THEN
+                XCTAssertTrue(true)
+            }
     }
 }

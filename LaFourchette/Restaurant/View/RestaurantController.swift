@@ -1,6 +1,6 @@
 import Foundation
 
-class RestaurantController {
+final class RestaurantController {
     private let interactor: RestaurantInteractor
     private let executor: Executor
     

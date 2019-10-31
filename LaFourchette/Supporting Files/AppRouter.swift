@@ -8,7 +8,7 @@ enum Link: Equatable {
     case restaurant
 }
 
-class AppRouter {
+final class AppRouter {
     var mainViewController: UIViewController!
     
     func rootViewController() -> UIViewController {

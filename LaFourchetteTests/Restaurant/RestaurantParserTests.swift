@@ -8,12 +8,12 @@ class RestaurantParserTests: XCTestCase {
         let parser = RestaurantParser()
         
         // WHEN
-        do {
-            _ = try parser.parse(Data())
-            XCTFail()
-        } catch {
-            // THEN
-            XCTAssertTrue(true)
-        }
+        parser.parse(Data())
+            .then {_ in 
+                XCTFail()
+            }.catch {
+                // THEN
+                XCTAssertTrue(true)
+            }
     }
 }

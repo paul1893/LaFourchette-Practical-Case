@@ -2,16 +2,17 @@ import Foundation
 
 protocol Parser{
     associatedtype T
-    func parse(_ data: Data) throws -> T
+    func parse(_ data: Data) -> Promise<RestaurantJSON, RepositoryError>
 }
 
 class RestaurantParser : Parser {
     typealias T = RestaurantJSON
-    func parse(_ data: Data) throws -> RestaurantJSON {
+    func parse(_ data: Data) -> Promise<RestaurantJSON, RepositoryError> {
         do {
-            return try JSONDecoder().decode(DataJSON.self, from: data).data
+            let data = try JSONDecoder().decode(DataJSON.self, from: data).data
+            return Promise(.success(data))
         } catch {
-            throw RepositoryError.parsingError
+            return Promise(.failure(RepositoryError.parsingError))
         }
     }
 }

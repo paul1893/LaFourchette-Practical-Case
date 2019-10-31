@@ -62,3 +62,7 @@ I could have:
 <img src="Screenshots/view4.png" width="300"/>
 <img src="Screenshots/view5.png" width="300"/>
 
+#QA
+You have init your constraints in `didMoveToSuperView`. Do you think there is side effect if `removeFromSuperview`is called ?
+
+When `removeFromSuperview` iOS keep constraints inside child view. Only parents constraints are destroyed. If you init parent constraints again the UI elements inside child view appeared correctly.
